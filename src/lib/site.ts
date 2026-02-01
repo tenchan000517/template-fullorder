@@ -60,6 +60,7 @@ export interface SiteData {
     logoOnly: string;
   };
   seo: {
+    siteUrl: string;
     titleSuffix: string;
     defaultTitle: string;
     defaultDescription: string;

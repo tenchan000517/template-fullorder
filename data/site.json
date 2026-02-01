@@ -50,6 +50,7 @@
     "logoOnly": "/images/logo-only.png"
   },
   "seo": {
+    "siteUrl": "",
     "titleSuffix": "",
     "defaultTitle": "",
     "defaultDescription": ""

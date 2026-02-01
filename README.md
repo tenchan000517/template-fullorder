@@ -8,6 +8,8 @@
 - **ナビゲーション動的**: `site.json` の `navigation` から読み込み
 - **Header/Footer**: 基本構造のみ（ナビゲーションは空）
 - **完全カスタム**: 構成案に基づいて自由に実装
+- **SEO対応**: JSON-LD構造化データ、OGP、Twitter Card対応
+- **API Route**: コンタクトフォーム用APIエンドポイント
 
 ## 技術スタック
 
@@ -22,11 +24,22 @@
 template-fullorder/
 ├── data/
 │   └── site.json          # 企業情報 + ナビゲーション
+├── public/
+│   └── images/
+│       ├── logo.png       # ロゴ（横長）
+│       ├── logo-square.png # ロゴ（正方形）
+│       └── logo-only.png  # ロゴマークのみ
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx     # 共通レイアウト
+│   │   ├── layout.tsx     # 共通レイアウト（SEO設定含む）
 │   │   ├── page.tsx       # TOPページ（プレースホルダー）
-│   │   └── globals.css    # グローバルスタイル
+│   │   ├── globals.css    # グローバルスタイル
+│   │   ├── icon.png       # ファビコン
+│   │   ├── apple-icon.tsx # Apple Touch Icon（動的生成）
+│   │   ├── opengraph-image.tsx # OGP画像（動的生成）
+│   │   └── api/
+│   │       └── contact/
+│   │           └── route.ts # お問い合わせAPI
 │   ├── components/
 │   │   ├── Header.tsx     # ヘッダー（navigation.main から読み込み）
 │   │   └── Footer.tsx     # フッター（navigation.footer から読み込み）
@@ -68,6 +81,11 @@ npm run dev
   "company": {
     "name": "株式会社サンプル",
     "catchphrase": "キャッチコピー"
+  },
+  "seo": {
+    "siteUrl": "https://example.com",
+    "defaultTitle": "株式会社サンプル",
+    "defaultDescription": "サイトの説明文"
   }
 }
 ```
@@ -110,6 +128,67 @@ src/app/
 - Tailwind CSS のユーティリティクラスを使用
 - カスタムCSSは最小限に
 - レスポンシブ対応は `md:` `lg:` プレフィックスを使用
+
+## SEO対応
+
+### 自動生成される項目
+
+| 項目 | ファイル | 備考 |
+|------|----------|------|
+| OGP画像 | `opengraph-image.tsx` | ロゴから自動生成 |
+| Apple Touch Icon | `apple-icon.tsx` | logo-square.pngから生成 |
+| ファビコン | `icon.png` | 手動で配置 |
+| JSON-LD | `layout.tsx` | LocalBusiness構造化データ |
+
+### site.json で設定する項目
+
+```json
+{
+  "seo": {
+    "siteUrl": "https://example.com",
+    "titleSuffix": " | 株式会社サンプル",
+    "defaultTitle": "株式会社サンプル",
+    "defaultDescription": "サイトの説明文"
+  }
+}
+```
+
+## 画像準備チェックリスト
+
+| 画像 | サイズ | 形式 | 配置場所 | 必須 |
+|------|--------|------|----------|------|
+| ロゴ（横長） | 任意 | PNG | `public/images/logo.png` | ✅ |
+| ロゴ（正方形） | 任意 | PNG | `public/images/logo-square.png` | ✅ |
+| ファビコン | 32x32以上 | PNG | `src/app/icon.png` | ✅ |
+
+※ OGP画像・Apple Touch Iconはロゴから自動生成されます。
+
+## API Route
+
+### お問い合わせフォーム
+
+```
+POST /api/contact
+```
+
+**リクエストボディ**:
+```json
+{
+  "name": "山田太郎",
+  "email": "yamada@example.com",
+  "phone": "03-1234-5678",
+  "company": "株式会社サンプル",
+  "message": "お問い合わせ内容"
+}
+```
+
+**レスポンス**:
+```json
+{
+  "success": true,
+  "message": "お問い合わせを受け付けました。"
+}
+```
 
 ## template-standard との違い
 
