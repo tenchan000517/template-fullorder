@@ -1,9 +1,7 @@
 import { ImageResponse } from "next/og";
-import { readFile } from "fs/promises";
-import { join } from "path";
 import siteData from "@data/site.json";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const alt = siteData.company.name || "会社名";
 export const size = {
   width: 1200,
@@ -12,18 +10,6 @@ export const size = {
 export const contentType = "image/png";
 
 export default async function Image() {
-  // ロゴ画像を読み込み（site.jsonのimages.logoを使用）
-  const logoFileName = siteData.images.logo?.replace("/images/", "") || "logo.png";
-  const logoPath = join(process.cwd(), "public/images", logoFileName);
-
-  let logoBase64: string | null = null;
-  try {
-    const logoData = await readFile(logoPath);
-    logoBase64 = `data:image/png;base64,${logoData.toString("base64")}`;
-  } catch {
-    // ロゴが見つからない場合はテキストのみで表示
-  }
-
   return new ImageResponse(
     (
       <div
@@ -34,35 +20,24 @@ export default async function Image() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#ffffff",
+          backgroundColor: "#1a3a5c",
         }}
       >
-        {logoBase64 ? (
-          <img
-            src={logoBase64}
-            alt={siteData.company.name || "会社ロゴ"}
-            style={{
-              width: 500,
-              height: "auto",
-            }}
-          />
-        ) : (
-          <div
-            style={{
-              fontSize: 64,
-              fontWeight: 700,
-              color: "#1a3a5c",
-            }}
-          >
-            {siteData.company.name || "会社名"}
-          </div>
-        )}
+        <div
+          style={{
+            fontSize: 72,
+            fontWeight: 700,
+            color: "#ffffff",
+          }}
+        >
+          {siteData.company.name || "会社名"}
+        </div>
         {siteData.company.catchphrase && (
           <div
             style={{
-              marginTop: 24,
-              fontSize: 28,
-              color: "#666666",
+              marginTop: 32,
+              fontSize: 36,
+              color: "rgba(255, 255, 255, 0.9)",
             }}
           >
             {siteData.company.catchphrase}
